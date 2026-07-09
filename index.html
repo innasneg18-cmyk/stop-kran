@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Стоп-кран</title>
+
+<!-- PWA -->
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#191b1f">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Стоп-кран">
+<meta name="mobile-web-app-capable" content="yes">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,500&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #191b1f;
+    --bg-soft: #202329;
+    --ink: #eae6dd;
+    --ink-dim: #9a978f;
+    --amber: #e3a857;
+    --sage: #7c9885;
+    --rose: #c97064;
+    --line: rgba(234,230,221,0.09);
+    --radius: 18px;
+  }
+  *{box-sizing:border-box;}
+  html,body{height:100%;}
+  body{
+    margin:0;
+    background:
+      radial-gradient(ellipse 900px 500px at 15% -5%, rgba(227,168,87,0.06), transparent),
+      radial-gradient(ellipse 700px 500px at 100% 100%, rgba(124,152,133,0.05), transparent),
+      var(--bg);
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    overflow-x:hidden;
+  }
+  .wrap{
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    padding:32px 20px 12px;
+    position:relative;
+  }
+  header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:calc(20px + env(safe-area-inset-top)) 24px 20px;
+    max-width:640px;
+    width:100%;
+    margin:0 auto;
+  }
+  .logo{
+    font-family:'Fraunces',serif;
+    font-size:20px;
+    font-weight:600;
+    letter-spacing:0.01em;
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .logo-dot{
+    width:8px;height:8px;border-radius:50%;
+    background:var(--amber);
+    box-shadow:0 0 12px 2px rgba(227,168,87,0.5);
+  }
+  .icon-btn{
+    background:none;border:none;color:var(--ink-dim);
+    cursor:pointer;padding:8px;border-radius:10px;
+    display:flex;align-items:center;justify-content:center;
+    transition:background .15s, color .15s;
+  }
+  .icon-btn:hover{background:var(--bg-soft); color:var(--ink);}
+  .icon-btn:focus-visible{outline:2px solid var(--amber); outline-offset:2px;}
+
+  /* Signature: hanging cord */
+  .cord-area{
+    position:relative;
+    height:260px;
+    width:100%;
+    max-width:420px;
+    display:flex;
+    justify-content:center;
+  }
+  .cord{
+    position:absolute;
+    top:0;
+    width:2px;
+    height:100%;
+    background:linear-gradient(to bottom, transparent, rgba(234,230,221,0.25) 15%, rgba(234,230,221,0.35));
+    transform-origin:top center;
+  }
+  .handle-btn{
+    position:absolute;
+    bottom:20px;
+    left:50%;
+    transform:translateX(-50%);
+    width:88px;height:88px;
+    border-radius:50%;
+    border:1px solid rgba(227,168,87,0.35);
+    background:radial-gradient(circle at 35% 30%, #2c2f36, #202329 70%);
+    color:var(--amber);
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    letter-spacing:0.06em;
+    text-transform:uppercase;
+    line-height:1.3;
+    box-shadow:0 0 0 0 rgba(227,168,87,0), 0 10px 30px rgba(0,0,0,0.35);
+    transition:box-shadow .25s, border-color .25s, transform .15s;
+  }
+  .handle-btn:hover{border-color:rgba(227,168,87,0.7);}
+  .handle-btn:active{transform:translateX(-50%) scale(0.96);}
+  .handle-btn:focus-visible{outline:2px solid var(--amber); outline-offset:4px;}
+  .handle-btn.pulsing{
+    animation: breathe 3.2s ease-in-out infinite;
+  }
+  @keyframes breathe{
+    0%,100%{ box-shadow:0 0 0 0 rgba(227,168,87,0.12), 0 10px 30px rgba(0,0,0,0.35);}
+    50%{ box-shadow:0 0 0 14px rgba(227,168,87,0), 0 10px 30px rgba(0,0,0,0.35);}
+  }
+  .cord.tugged{ animation: tug .5s ease; }
+  @keyframes tug{
+    0%{ transform: scaleY(1); }
+    30%{ transform: scaleY(1.06); }
+    60%{ transform: scaleY(0.98); }
+    100%{ transform: scaleY(1); }
+  }
+
+  .hint{
+    margin-top:26px;
+    text-align:center;
+    color:var(--ink-dim);
+    font-size:14px;
+    max-width:320px;
+    line-height:1.5;
+  }
+  .hint b{ color:var(--ink); font-weight:500; }
+
+  footer{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:6px;
+    padding:18px 20px 26px;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12px;
+    color:var(--ink-dim);
+  }
+  .dot-row{ display:flex; gap:5px; }
+  .day-dot{ width:6px;height:6px;border-radius:50%; background:rgba(234,230,221,0.15); }
+  .day-dot.lit{ background:var(--amber); }
+
+  /* Overlay */
+  .overlay{
+    position:fixed; inset:0;
+    background:rgba(15,16,19,0.72);
+    backdrop-filter: blur(6px);
+    display:flex; align-items:center; justify-content:center;
+    padding:20px;
+    z-index:50;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .35s ease;
+  }
+  .overlay.show{ opacity:1; pointer-events:auto; }
+  .card{
+    background: var(--bg-soft);
+    border:1px solid var(--line);
+    border-radius: var(--radius);
+    max-width:460px;
+    width:100%;
+    padding:32px 28px 26px;
+    position:relative;
+    transform: translateY(14px) scale(0.98);
+    opacity:0;
+    transition: transform .4s cubic-bezier(.2,.8,.2,1), opacity .4s ease;
+    box-shadow: 0 30px 80px rgba(0,0,0,0.45);
+  }
+  .overlay.show .card{ transform:translateY(0) scale(1); opacity:1; }
+  .tag{
+    display:inline-flex;
+    align-items:center;
+    gap:7px;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    color: var(--tag-color, var(--amber));
+    margin-bottom:18px;
+  }
+  .tag-dot{ width:6px;height:6px;border-radius:50%; background:var(--tag-color, var(--amber)); }
+  .card h2{
+    font-family:'Fraunces',serif;
+    font-weight:500;
+    font-size:23px;
+    line-height:1.35;
+    margin:0 0 6px;
+  }
+  .card .body-text{
+    font-size:15px;
+    line-height:1.65;
+    color:#cfccc3;
+    margin:0 0 8px;
+  }
+  .card .source{
+    font-size:12.5px;
+    color:var(--ink-dim);
+    font-style:italic;
+    margin:6px 0 0;
+  }
+  .svg-wrap{
+    width:100%;
+    aspect-ratio:16/10;
+    border-radius:12px;
+    overflow:hidden;
+    margin-bottom:16px;
+    background:#15171b;
+  }
+  .svg-wrap svg{ width:100%; height:100%; display:block; }
+
+  .timer-row{
+    display:flex; align-items:center; gap:12px;
+    margin: 16px 0 4px;
+  }
+  .timer-ring{ width:38px; height:38px; flex-shrink:0; }
+  .timer-label{ font-family:'IBM Plex Mono',monospace; font-size:13px; color:var(--ink-dim); }
+
+  .dismiss{
+    margin-top:22px;
+    width:100%;
+    padding:13px;
+    border-radius:12px;
+    border:1px solid var(--line);
+    background:transparent;
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    font-size:14px;
+    font-weight:500;
+    cursor:pointer;
+    transition: background .15s, border-color .15s;
+  }
+  .dismiss:hover{ background:rgba(234,230,221,0.05); border-color:rgba(234,230,221,0.2); }
+  .dismiss:focus-visible{ outline:2px solid var(--amber); outline-offset:2px; }
+
+  /* Settings drawer */
+  .drawer-backdrop{
+    position:fixed; inset:0; background:rgba(15,16,19,0.5);
+    opacity:0; pointer-events:none; transition:opacity .3s; z-index:40;
+  }
+  .drawer-backdrop.show{ opacity:1; pointer-events:auto; }
+  .drawer{
+    position:fixed; top:0; right:0; height:100%; width:320px; max-width:88vw;
+    background:var(--bg-soft);
+    border-left:1px solid var(--line);
+    padding:28px 24px;
+    transform:translateX(100%);
+    transition:transform .35s cubic-bezier(.2,.8,.2,1);
+    z-index:41;
+    overflow-y:auto;
+  }
+  .drawer.show{ transform:translateX(0); }
+  .drawer h3{
+    font-family:'Fraunces',serif; font-weight:500; font-size:19px; margin:0 0 22px;
+  }
+  .field{ margin-bottom:22px; }
+  .field label{
+    display:block; font-size:13px; color:var(--ink-dim); margin-bottom:8px;
+  }
+  .field .val{ color:var(--amber); font-family:'IBM Plex Mono',monospace; }
+  input[type=range]{
+    width:100%; accent-color:var(--amber);
+  }
+  .toggle-row{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:10px 0; border-bottom:1px solid var(--line);
+    font-size:14px;
+  }
+  .toggle-row:last-child{ border-bottom:none; }
+  .switch{
+    width:38px; height:22px; border-radius:20px;
+    background: rgba(234,230,221,0.12);
+    position:relative; cursor:pointer; border:none; flex-shrink:0;
+  }
+  .switch::after{
+    content:''; position:absolute; top:2px; left:2px;
+    width:18px; height:18px; border-radius:50%;
+    background:var(--ink-dim); transition: transform .2s, background .2s;
+  }
+  .switch.on{ background:rgba(227,168,87,0.28); }
+  .switch.on::after{ transform:translateX(16px); background:var(--amber); }
+  .close-drawer{
+    position:absolute; top:24px; right:20px;
+    background:none;border:none;color:var(--ink-dim);cursor:pointer;
+    font-size:20px; line-height:1;
+  }
+
+  .sr-only{
+    position:absolute; width:1px;height:1px; overflow:hidden; clip:rect(0,0,0,0);
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation-duration:0.01ms !important; transition-duration:0.01ms !important; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo"><span class="logo-dot"></span>Стоп-кран</div>
+  <button class="icon-btn" id="settingsBtn" aria-label="Настройки" title="Настройки">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06A2 2 0 1 1 7.04 4.29l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+  </button>
+</header>
+
+<main class="wrap">
+  <div class="cord-area">
+    <div class="cord" id="cord"></div>
+    <button class="handle-btn pulsing" id="pullBtn">ДЁРНУТЬ</button>
+  </div>
+  <p class="hint" id="statusHint">Где-то между делами тебя <b>тихо выдернет</b> — сам не заметишь когда.</p>
+</main>
+
+<footer>
+  <span id="countLabel">Сегодня: 0</span>
+  <span class="dot-row" id="dotRow"></span>
+</footer>
+
+<!-- Overlay -->
+<div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-labelledby="cardTitle">
+  <div class="card" id="card">
+    <div class="tag" id="cardTag"><span class="tag-dot"></span><span id="cardTagText">Заземление</span></div>
+    <div id="cardMedia"></div>
+    <h2 id="cardTitle"></h2>
+    <p class="body-text" id="cardBody"></p>
+    <p class="source" id="cardSource"></p>
+    <div class="timer-row" id="timerRow" style="display:none">
+      <svg class="timer-ring" viewBox="0 0 40 40">
+        <circle cx="20" cy="20" r="16" fill="none" stroke="rgba(234,230,221,0.12)" stroke-width="4"/>
+        <circle id="timerCircle" cx="20" cy="20" r="16" fill="none" stroke="var(--sage)" stroke-width="4" stroke-linecap="round" stroke-dasharray="100.5" stroke-dashoffset="0" transform="rotate(-90 20 20)"/>
+      </svg>
+      <span class="timer-label" id="timerLabel">30 сек</span>
+    </div>
+    <button class="dismiss" id="dismissBtn">Ладно, живу дальше</button>
+  </div>
+</div>
+
+<!-- Settings drawer -->
+<div class="drawer-backdrop" id="drawerBackdrop"></div>
+<div class="drawer" id="drawer">
+  <button class="close-drawer" id="closeDrawer" aria-label="Закрыть">✕</button>
+  <h3>Настройки пауз</h3>
+
+  <div class="field">
+    <label>Минимальный интервал: <span class="val" id="minVal">25</span> мин</label>
+    <input type="range" id="minRange" min="5" max="120" value="25">
+  </div>
+  <div class="field">
+    <label>Максимальный интервал: <span class="val" id="maxVal">70</span> мин</label>
+    <input type="range" id="maxRange" min="5" max="180" value="70">
+  </div>
+
+  <div class="toggle-row" style="border-bottom:1px solid var(--line); margin-bottom:4px;">
+    <span>Звуковой сигнал</span><button class="switch on" id="soundToggle"></button>
+  </div>
+
+  <h3 style="margin-top:18px;font-size:15px;">Что показывать</h3>
+  <div class="toggle-row"><span>Заземление</span><button class="switch on" data-cat="grounding"></button></div>
+  <div class="toggle-row"><span>Вопросы</span><button class="switch on" data-cat="question"></button></div>
+  <div class="toggle-row"><span>Цитаты</span><button class="switch on" data-cat="quote"></button></div>
+  <div class="toggle-row"><span>Истории</span><button class="switch on" data-cat="story"></button></div>
+  <div class="toggle-row"><span>Картинки</span><button class="switch on" data-cat="image"></button></div>
+
+</div>
+
+<script>
+(function(){
+
+  // ---------- Контент ----------
+  const CONTENT = {
+    grounding: {
+      label: 'Заземление', color: 'var(--sage)',
+      items: [
+        { title:'Пять вещей вокруг', body:'Назови (можно молча) пять предметов, которые видишь прямо сейчас. Не важных — любых. Стол считается.', duration:30 },
+        { title:'Стопы на полу', body:'Почувствуй, как стопы касаются пола. Обе. Правда обе — левую часто забывают.', duration:20 },
+        { title:'Три вдоха подлиннее', body:'Сделай три вдоха медленнее обычного. Выдох длиннее вдоха. Это всё, никакой мистики.', duration:40 },
+        { title:'Температура воздуха', body:'Какая температура в комнате прямо сейчас? Не проверяй термометр — просто почувствуй кожей.', duration:20 },
+        { title:'Звук, которого не замечал', body:'Прислушайся: есть звук, который фонит уже давно, а ты его отключил. Найди его.', duration:25 },
+        { title:'Плечи вниз', body:'Проверь плечи. Скорее всего, они у ушей. Опусти. Ещё раз через минуту — обычно возвращаются.', duration:15 },
+        { title:'Вес тела', body:'Почувствуй, как стул (или что там под тобой) держит твой вес. Он справляется. Можно расслабиться чуть больше.', duration:25 },
+      ]
+    },
+    question: {
+      label: 'Вопрос', color: 'var(--amber)',
+      items: [
+        { title:'Что было час назад?', body:'Опиши, чем ты занимался последний час. Если пришлось напрячься, чтобы вспомнить — это ответ.' },
+        { title:'Сколько раз доставал телефон?', body:'Не проверяй экранное время. Прикинь на глаз. А теперь сравни с реальным числом — если хватит духу.' },
+        { title:'Кому ты сегодня искренне обрадовался?', body:'Необязательно человеку. Может, коту. Может, тому, что автобус пришёл вовремя.' },
+        { title:'Что бы ты хотел успеть до вечера?', body:'Не из списка дел — из тех вещей, о которых потом жалеешь, что не сделал.' },
+        { title:'Где болит?', body:'Не метафора. Реально просканируй тело — шея, спина, глаза. Что-то же ноет уже час.' },
+        { title:'Ты бы заметил закат сегодня?', body:'Не важно, был он или нет. Важно, заметил бы ты вообще.' },
+        { title:'Когда последний раз смеялся не из вежливости?', body:'Именно смеялся, а не сделал полагающееся лицо.' },
+      ]
+    },
+    quote: {
+      label: 'Цитата', color: 'var(--rose)',
+      items: [
+        { body:'Планы на будущее — отличный способ не жить в настоящем.', source:'— неизвестный, но явно уставший' },
+        { body:'Занятость — не достижение. Это просто занятость.', source:'— народная мудрость, версия для взрослых' },
+        { body:'Ты не обязан использовать каждую минуту эффективно. Минута переживёт это оскорбление.', source:'— кто-то умный, имя не скажу' },
+        { body:'Прокрастинация — это когда откладываешь дело. Диссоциация — когда откладываешь саму жизнь.', source:'— подслушано в очереди' },
+        { body:'День, прожитый на автомате, всё равно засчитывается. Просто без свидетелей.', source:'— автор пожелал остаться в потоке' },
+        { body:'«Потом разберусь» — самая долгая стройка в истории человечества.', source:'— строительная поговорка' },
+        { body:'Список дел никогда не скажет тебе спасибо.', source:'— и это единственное, что он умеет' },
+      ]
+    },
+    story: {
+      label: 'История', color: '#8fb3c4',
+      items: [
+        { body:'Один человек десять лет мечтал о поездке к морю. Когда наконец поехал — весь день проверял почту на пляже. Море, к слову, было на месте.' },
+        { body:'Женщина каждый день говорила «вот закончу этот проект — и заживу». Проектов было двенадцать. Жизнь так и не началась официально.' },
+        { body:'Кот наблюдал за хозяином три часа: тот что-то печатал, вздыхал, снова печатал. В конце дня кот так и не понял, зачем всё это.' },
+        { body:'Мужчина хотел позвонить отцу «на днях». Дни имели наглость закончиться раньше, чем звонок.' },
+        { body:'Студентка отложила прогулку ради учёбы. Через месяц не вспомнила ни одной темы, зато прекрасно помнила, что не гуляла.' },
+      ]
+    }
+  };
+
+  // ---------- Состояние ----------
+  const state = {
+    enabled: { grounding:true, question:true, quote:true, story:true, image:true },
+    minMin: 25,
+    maxMin: 70,
+    soundOn: true,
+    count: 0,
+    timerId: null,
+    activeCountdown: null
+  };
+
+  const el = id => document.getElementById(id);
+  const cord = el('cord'), pullBtn = el('pullBtn');
+  const overlay = el('overlay'), card = el('card');
+  const cardTag = el('cardTag'), cardTagText = el('cardTagText');
+  const cardMedia = el('cardMedia'), cardTitle = el('cardTitle'), cardBody = el('cardBody'), cardSource = el('cardSource');
+  const timerRow = el('timerRow'), timerLabel = el('timerLabel'), timerCircle = el('timerCircle');
+  const dismissBtn = el('dismissBtn');
+  const settingsBtn = el('settingsBtn'), drawer = el('drawer'), drawerBackdrop = el('drawerBackdrop'), closeDrawer = el('closeDrawer');
+  const minRange = el('minRange'), maxRange = el('maxRange'), minVal = el('minVal'), maxVal = el('maxVal');
+  const soundToggle = el('soundToggle');
+  const countLabel = el('countLabel'), dotRow = el('dotRow'), statusHint = el('statusHint');
+
+  const DISMISS_PHRASES = [
+    'Ладно, живу дальше', 'Возвращаюсь в поток', 'Принято, продолжаю', 'Ок, дела зовут', 'Замечено, иду дальше'
+  ];
+
+  function pick(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+
+  let audioCtx = null;
+  function playChime(){
+    if(!state.soundOn) return;
+    try{
+      if(!audioCtx){ audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
+      if(audioCtx.state === 'suspended'){ audioCtx.resume(); }
+      const now = audioCtx.currentTime;
+      // Два мягких обертона — тихий "звоночек", не будильник
+      const freqs = [660, 990];
+      freqs.forEach((f, i)=>{
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.value = f;
+        const start = now + i*0.09;
+        gain.gain.setValueAtTime(0, start);
+        gain.gain.linearRampToValueAtTime(0.09, start + 0.04);
+        gain.gain.exponentialRampToValueAtTime(0.0001, start + 1.1);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start(start);
+        osc.stop(start + 1.2);
+      });
+    }catch(e){ /* звук недоступен — тишина не критична */ }
+  }
+
+  function randSVG(){
+    const palette = ['#e3a857','#7c9885','#c97064','#8fb3c4','#cfa5d1'];
+    const c1 = pick(palette), c2 = pick(palette);
+    const shapes = [];
+    const n = 3 + Math.floor(Math.random()*3);
+    for(let i=0;i<n;i++){
+      const cx = 20 + Math.random()*260, cy = 20 + Math.random()*140;
+      const r = 20 + Math.random()*60;
+      const fill = Math.random() > 0.5 ? c1 : c2;
+      const op = (0.12 + Math.random()*0.28).toFixed(2);
+      shapes.push(`<circle cx="${cx}" cy="${cy}" r="${r}" fill="${fill}" opacity="${op}"/>`);
+    }
+    return `<svg viewBox="0 0 300 180" xmlns="http://www.w3.org/2000/svg">
+      <rect width="300" height="180" fill="#15171b"/>
+      ${shapes.join('')}
+    </svg>`;
+  }
+
+  let countdownInterval = null;
+  function startTechTimer(seconds){
+    timerRow.style.display = 'flex';
+    let remaining = seconds;
+    timerLabel.textContent = remaining + ' сек';
+    const circumference = 100.5;
+    timerCircle.setAttribute('stroke-dasharray', circumference);
+    timerCircle.setAttribute('stroke-dashoffset', 0);
+    clearInterval(countdownInterval);
+    countdownInterval = setInterval(()=>{
+      remaining--;
+      timerLabel.textContent = Math.max(remaining,0) + ' сек';
+      const offset = circumference * (1 - remaining/seconds);
+      timerCircle.setAttribute('stroke-dashoffset', offset);
+      if(remaining<=0){ clearInterval(countdownInterval); timerLabel.textContent = 'Готово'; }
+    }, 1000);
+  }
+
+  function showPause(){
+    const enabledCats = Object.keys(state.enabled).filter(k=>state.enabled[k]);
+    if(enabledCats.length === 0){ return; }
+    const cat = pick(enabledCats);
+
+    cardMedia.innerHTML = '';
+    timerRow.style.display = 'none';
+    clearInterval(countdownInterval);
+    cardSource.textContent = '';
+
+    if(cat === 'image'){
+      cardTagText.textContent = 'Картинка';
+      cardTag.style.setProperty('--tag-color', '#8fb3c4');
+      const wrap = document.createElement('div');
+      wrap.className = 'svg-wrap';
+      wrap.innerHTML = randSVG();
+      cardMedia.appendChild(wrap);
+      cardTitle.textContent = 'Просто посмотри пару секунд';
+      cardBody.textContent = 'Ни на что не намекает. Это просто цвет и форма — дай глазам отдохнуть от текста.';
+    } else {
+      const group = CONTENT[cat];
+      const item = pick(group.items);
+      cardTagText.textContent = group.label;
+      cardTag.style.setProperty('--tag-color', group.color);
+      cardTitle.textContent = item.title || '';
+      cardBody.textContent = item.body;
+      if(item.source){ cardSource.textContent = item.source; }
+      if(cat === 'grounding' && item.duration){
+        startTechTimer(item.duration);
+      }
+      if(!item.title){ cardTitle.style.display='none'; } else { cardTitle.style.display='block'; }
+    }
+
+    dismissBtn.textContent = pick(DISMISS_PHRASES);
+    overlay.classList.add('show');
+    dismissBtn.focus();
+    playChime();
+
+    state.count++;
+    updateFooter();
+    saveStats();
+  }
+
+  function hidePause(){
+    overlay.classList.remove('show');
+    clearInterval(countdownInterval);
+  }
+
+  function updateFooter(){
+    countLabel.textContent = 'Сегодня: ' + state.count;
+    dotRow.innerHTML = '';
+    const shown = Math.min(state.count, 12);
+    for(let i=0;i<Math.max(shown,1);i++){
+      const d = document.createElement('span');
+      d.className = 'day-dot' + (i < state.count ? ' lit' : '');
+      dotRow.appendChild(d);
+    }
+  }
+
+  function scheduleNext(){
+    clearTimeout(state.timerId);
+    const min = state.minMin, max = Math.max(state.maxMin, state.minMin+1);
+    const mins = min + Math.random()*(max-min);
+    const ms = mins*60*1000;
+    state.timerId = setTimeout(()=>{
+      showPause();
+      scheduleNext();
+    }, ms);
+  }
+
+  function pullCord(){
+    cord.classList.remove('tugged');
+    void cord.offsetWidth;
+    cord.classList.add('tugged');
+    showPause();
+    scheduleNext();
+  }
+
+  // ---------- Events ----------
+  pullBtn.addEventListener('click', pullCord);
+  dismissBtn.addEventListener('click', hidePause);
+  overlay.addEventListener('click', (e)=>{ if(e.target === overlay) hidePause(); });
+  document.addEventListener('keydown', (e)=>{ if(e.key === 'Escape'){ hidePause(); closeDrawerFn(); } });
+
+  function openDrawer(){ drawer.classList.add('show'); drawerBackdrop.classList.add('show'); }
+  function closeDrawerFn(){ drawer.classList.remove('show'); drawerBackdrop.classList.remove('show'); }
+  settingsBtn.addEventListener('click', openDrawer);
+  closeDrawer.addEventListener('click', closeDrawerFn);
+  drawerBackdrop.addEventListener('click', closeDrawerFn);
+
+  minRange.addEventListener('input', ()=>{
+    state.minMin = parseInt(minRange.value);
+    if(state.minMin >= state.maxMin){ state.maxMin = state.minMin+1; maxRange.value = state.maxMin; maxVal.textContent = state.maxMin; }
+    minVal.textContent = state.minMin;
+    scheduleNext(); saveSettings();
+  });
+  maxRange.addEventListener('input', ()=>{
+    state.maxMin = parseInt(maxRange.value);
+    if(state.maxMin <= state.minMin){ state.minMin = Math.max(state.maxMin-1,5); minRange.value = state.minMin; minVal.textContent = state.minMin; }
+    maxVal.textContent = state.maxMin;
+    scheduleNext(); saveSettings();
+  });
+
+  document.querySelectorAll('.switch[data-cat]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const cat = btn.dataset.cat;
+      state.enabled[cat] = !state.enabled[cat];
+      btn.classList.toggle('on', state.enabled[cat]);
+      saveSettings();
+    });
+  });
+
+  soundToggle.addEventListener('click', ()=>{
+    state.soundOn = !state.soundOn;
+    soundToggle.classList.toggle('on', state.soundOn);
+    if(state.soundOn){ playChime(); } // короткое превью, чтобы услышать что включил
+    saveSettings();
+  });
+
+  // ---------- Persistence (best-effort, silent fallback) ----------
+  async function saveStats(){
+    try{
+      const today = new Date().toISOString().slice(0,10);
+      await window.storage.set('stopkran:stats', JSON.stringify({date:today, count: state.count}));
+    }catch(e){ /* работаем без сохранения */ }
+  }
+  async function saveSettings(){
+    try{
+      await window.storage.set('stopkran:settings', JSON.stringify({
+        enabled: state.enabled, minMin: state.minMin, maxMin: state.maxMin, soundOn: state.soundOn
+      }));
+    }catch(e){}
+  }
+  async function loadAll(){
+    try{
+      const today = new Date().toISOString().slice(0,10);
+      const s = await window.storage.get('stopkran:stats');
+      if(s && s.value){
+        const parsed = JSON.parse(s.value);
+        if(parsed.date === today){ state.count = parsed.count || 0; }
+      }
+    }catch(e){}
+    try{
+      const s = await window.storage.get('stopkran:settings');
+      if(s && s.value){
+        const parsed = JSON.parse(s.value);
+        if(parsed.enabled){ state.enabled = parsed.enabled; }
+        if(parsed.minMin){ state.minMin = parsed.minMin; }
+        if(parsed.maxMin){ state.maxMin = parsed.maxMin; }
+        if(typeof parsed.soundOn === 'boolean'){ state.soundOn = parsed.soundOn; }
+      }
+    }catch(e){}
+
+    minRange.value = state.minMin; minVal.textContent = state.minMin;
+    maxRange.value = state.maxMin; maxVal.textContent = state.maxMin;
+    document.querySelectorAll('.switch[data-cat]').forEach(btn=>{
+      const cat = btn.dataset.cat;
+      btn.classList.toggle('on', !!state.enabled[cat]);
+    });
+    soundToggle.classList.toggle('on', state.soundOn);
+    updateFooter();
+    scheduleNext();
+  }
+
+  loadAll();
+
+  if('serviceWorker' in navigator){
+    window.addEventListener('load', ()=>{
+      navigator.serviceWorker.register('sw.js').catch(()=>{ /* офлайн-кэш недоступен — приложение всё равно работает */ });
+    });
+  }
+})();
+</script>
+
+</body>
+</html>
