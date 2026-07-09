@@ -385,6 +385,14 @@
     Покажет системное уведомление со звуком, даже если экран заблокирован или ты в другом приложении. Не сработает, если «Стоп-кран» полностью закрыт (смахнут из списка последних).
   </p>
 
+  <div class="field" id="pushServerField" style="display:none;">
+    <label>Адрес push-сервера</label>
+    <input type="text" id="pushServerInput" placeholder="https://stop-kran-push.твой-логин.workers.dev"
+      style="width:100%;padding:9px 10px;border-radius:8px;border:1px solid var(--line);background:#15171b;color:var(--ink);font-family:'IBM Plex Mono',monospace;font-size:12px;">
+    <button id="pushServerSave" style="margin-top:8px;width:100%;padding:9px;border-radius:8px;border:1px solid var(--line);background:transparent;color:var(--ink);font-size:13px;cursor:pointer;">Сохранить и подписаться</button>
+    <p id="pushServerStatus" style="font-size:12px;color:var(--ink-dim);margin-top:8px;"></p>
+  </div>
+
   <h3 style="margin-top:18px;font-size:15px;">Что показывать</h3>
   <div class="toggle-row"><span>Заземление</span><button class="switch on" data-cat="grounding"></button></div>
   <div class="toggle-row"><span>Вопросы</span><button class="switch on" data-cat="question"></button></div>
@@ -409,6 +417,19 @@
         { title:'Звук, которого не замечал', body:'Прислушайся: есть звук, который фонит уже давно, а ты его отключил. Найди его.', duration:25 },
         { title:'Плечи вниз', body:'Проверь плечи. Скорее всего, они у ушей. Опусти. Ещё раз через минуту — обычно возвращаются.', duration:15 },
         { title:'Вес тела', body:'Почувствуй, как стул (или что там под тобой) держит твой вес. Он справляется. Можно расслабиться чуть больше.', duration:25 },
+        { title:'Челюсть', body:'Проверь челюсть — она наверняка сжата. Разожми, дай языку отлипнуть от нёба.', duration:15 },
+        { title:'Одна точка контакта', body:'Найди одну точку, где тело касается одежды — воротник, резинка, часы. Просто задержись там вниманием.', duration:20 },
+        { title:'Медленное моргание', body:'Три раза моргни медленнее обычного, будто специально показываешь глазам, что можно расслабиться.', duration:15 },
+        { title:'Рука на груди', body:'Положи ладонь на грудь. Почувствуй дыхание под ней — не меняй его, просто заметь.', duration:30 },
+        { title:'Холод и тепло', body:'Найди на теле участок, где чуть прохладнее, и участок, где теплее. Просто сравни.', duration:25 },
+        { title:'Считаем выдохи', body:'Сосчитай пять выдохов подряд. Если собьёшься — начни заново, это нормально.', duration:45 },
+        { title:'Взгляд вдаль', body:'Найди самую дальнюю точку, которую видно отсюда, и задержи на ней взгляд секунд десять.', duration:15 },
+        { title:'Растяни пальцы', body:'Растопырь пальцы рук как можно шире, подержи три секунды, отпусти.', duration:15 },
+        { title:'Спина к опоре', body:'Прижмись спиной к спинке стула или стене. Почувствуй, где именно она касается.', duration:20 },
+        { title:'Название цвета', body:'Найди глазами что-то одного конкретного цвета — например, синего. Просто посмотри.', duration:15 },
+        { title:'Тяжесть в руках', body:'Позволь рукам стать чуть тяжелее, будто из них выпустили немного воздуха.', duration:20 },
+        { title:'Один медленный вдох носом', body:'Вдохни носом настолько медленно, насколько получится, будто вдыхаешь через соломинку.', duration:20 },
+        { title:'Замечаем ткань', body:'Потрогай ткань, в которую одет — просто почувствуй фактуру пару секунд.', duration:15 },
       ]
     },
     question: {
@@ -421,6 +442,17 @@
         { title:'Где болит?', body:'Не метафора. Реально просканируй тело — шея, спина, глаза. Что-то же ноет уже час.' },
         { title:'Ты бы заметил закат сегодня?', body:'Не важно, был он или нет. Важно, заметил бы ты вообще.' },
         { title:'Когда последний раз смеялся не из вежливости?', body:'Именно смеялся, а не сделал полагающееся лицо.' },
+        { title:'Что ты откладываешь третий день подряд?', body:'Не обязательно делать прямо сейчас. Просто назови вслух, что это.' },
+        { title:'Что бы ты сказал себе утреннему?', body:'Тому, кто планировал этот день ещё до того, как он превратился в то, во что превратился.' },
+        { title:'Сколько раз сегодня ты правда выбирал, а не просто плыл по течению?', body:'Разница есть, даже если кажется, что нет.' },
+        { title:'Что из сегодняшнего ты забудешь через неделю?', body:'А что, наоборот, запомнится? Обычно это разные вещи.' },
+        { title:'Ты ел, потому что был голоден, или потому что было время обеда?', body:'Просто любопытный вопрос, без выводов.' },
+        { title:'Что сейчас происходит у тебя в теле?', body:'Не в голове — в теле. Часто это разные новости.' },
+        { title:'Кого ты сегодня не услышал до конца?', body:'Потому что уже формулировал ответ, пока человек говорил.' },
+        { title:'Если бы день был песней, какой был бы темп?', body:'Тревожный аллегро или что-то на грани анданте?' },
+        { title:'Что бы ты сделал, если бы никто не оценивал?', body:'Прямо сейчас, в следующие десять минут.' },
+        { title:'Когда ты в последний раз скучал по-настоящему?', body:'Не листал ленту от скуки, а именно скучал, ничего не делая.' },
+        { title:'Что из вчерашних дел вообще имело значение?', body:'Не сортируй по важности — просто вспомни, что было вчера.' },
       ]
     },
     quote: {
@@ -433,6 +465,19 @@
         { body:'День, прожитый на автомате, всё равно засчитывается. Просто без свидетелей.', source:'— автор пожелал остаться в потоке' },
         { body:'«Потом разберусь» — самая долгая стройка в истории человечества.', source:'— строительная поговорка' },
         { body:'Список дел никогда не скажет тебе спасибо.', source:'— и это единственное, что он умеет' },
+        { body:'Многозадачность — это способ делать несколько дел одинаково невнимательно.', source:'— офисный философ' },
+        { body:'Отдых — не награда за продуктивность. Он не обязан её заслуживать.', source:'— записка самому себе' },
+        { body:'Иногда «я в порядке» — это просто самый короткий ответ, а не самый честный.', source:'— из подслушанного разговора' },
+        { body:'Спешка обычно экономит минуты, а тратит дни.', source:'— бухгалтерская мудрость' },
+        { body:'Уведомление на экране не обязано становиться делом всей жизни в моменте.', source:'— технический совет' },
+        { body:'Ты не отстаёшь от жизни. Ты просто решил, что жизнь — это гонка.', source:'— спорная, но полезная мысль' },
+        { body:'Идеальный момент начать никогда не наступит — зато полночь наступает каждый день.', source:'— полуночная мудрость' },
+        { body:'Усталость — это не слабость характера. Это просто усталость.', source:'— напоминание, которое стоило бы повесить на стену' },
+        { body:'То, что дело срочное, ещё не значит, что оно твоё.', source:'— неизвестный делегатор' },
+        { body:'Сравнение себя с чужой лентой — плохая идея на любом уровне зума.', source:'— наблюдение постороннего' },
+        { body:'Иногда лучший план на сегодня — просто дожить до вечера без геройства.', source:'— скромный девиз' },
+        { body:'Никто не лежит на смертном одре и жалеет о непрочитанных письмах.', source:'— грубовато, но по делу' },
+        { body:'Свободное время не появляется само. Его иногда приходится украсть у себя же.', source:'— практичный совет' },
       ]
     },
     story: {
@@ -443,11 +488,28 @@
         { body:'Кот наблюдал за хозяином три часа: тот что-то печатал, вздыхал, снова печатал. В конце дня кот так и не понял, зачем всё это.' },
         { body:'Мужчина хотел позвонить отцу «на днях». Дни имели наглость закончиться раньше, чем звонок.' },
         { body:'Студентка отложила прогулку ради учёбы. Через месяц не вспомнила ни одной темы, зато прекрасно помнила, что не гуляла.' },
+        { body:'Сосед по офису каждый обед говорил «сегодня точно выйду погулять». Через год коллеги начали воспринимать это как приветствие.' },
+        { body:'Программист поставил себе напоминание «отдохнуть» — и закрыл его не глядя, как обычное уведомление.' },
+        { body:'Женщина копила отпускные дни три года «на что-то важное». Уволилась — дни сгорели все разом.' },
+        { body:'Ребёнок звал отца посмотреть на радугу. Тот ответил «секунду» — и вышел, когда радуга уже ушла.' },
+        { body:'Мужчина коллекционировал впечатления как галочки в чек-листе. Однажды понял, что не помнит ни одного лица с этих фотографий.' },
+        { body:'Друзья договорились созваниваться «регулярно». Регулярность в итоге свелась к одному разу в день рождения.' },
+        { body:'Девушка отложила чтение любимой книги «на отпуск». Отпуск наступил — и она листала телефон, потому что «так привычнее».' },
       ]
     }
   };
 
   // ---------- Состояние ----------
+  // ---------- Push-уведомления ----------
+  const VAPID_PUBLIC_KEY = 'BCArITtqEZBbjuudjnOrfRNFj-gLMdmECuja0N6hnJcW--ezY9zxcAjaG_s9SBbqo-qeaffL-2OCqlP9gdafGRo';
+
+  function urlBase64ToUint8Array(base64String) {
+    const padding = '='.repeat((4 - base64String.length % 4) % 4);
+    const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+    const rawData = atob(base64);
+    return Uint8Array.from([...rawData].map(c => c.charCodeAt(0)));
+  }
+
   const state = {
     enabled: { grounding:true, question:true, quote:true, story:true, image:true },
     minMin: 25,
@@ -456,7 +518,8 @@
     notifyOn: false,
     count: 0,
     timerId: null,
-    activeCountdown: null
+    activeCountdown: null,
+    pushServerUrl: ''
   };
 
   const el = id => document.getElementById(id);
@@ -505,20 +568,79 @@
   }
 
   function randSVG(){
-    const palette = ['#e3a857','#7c9885','#c97064','#8fb3c4','#cfa5d1'];
-    const c1 = pick(palette), c2 = pick(palette);
-    const shapes = [];
-    const n = 3 + Math.floor(Math.random()*3);
-    for(let i=0;i<n;i++){
-      const cx = 20 + Math.random()*260, cy = 20 + Math.random()*140;
-      const r = 20 + Math.random()*60;
-      const fill = Math.random() > 0.5 ? c1 : c2;
-      const op = (0.12 + Math.random()*0.28).toFixed(2);
-      shapes.push(`<circle cx="${cx}" cy="${cy}" r="${r}" fill="${fill}" opacity="${op}"/>`);
+    const palette = ['#e3a857','#7c9885','#c97064','#8fb3c4','#cfa5d1','#d9c07a','#6f9bab','#b98a6f'];
+    const bg = '#15171b';
+    const mode = Math.floor(Math.random()*5);
+    let shapes = '';
+
+    if(mode === 0){
+      // мягкие пятна
+      const c1 = pick(palette), c2 = pick(palette);
+      const n = 3 + Math.floor(Math.random()*4);
+      for(let i=0;i<n;i++){
+        const cx = 10 + Math.random()*280, cy = 10 + Math.random()*160;
+        const r = 20 + Math.random()*70;
+        const fill = Math.random() > 0.5 ? c1 : c2;
+        const op = (0.12 + Math.random()*0.28).toFixed(2);
+        shapes += `<circle cx="${cx}" cy="${cy}" r="${r}" fill="${fill}" opacity="${op}"/>`;
+      }
+    } else if(mode === 1){
+      // дуги / кольца
+      const c1 = pick(palette), c2 = pick(palette);
+      const n = 3 + Math.floor(Math.random()*4);
+      for(let i=0;i<n;i++){
+        const cx = 30 + Math.random()*240, cy = 20 + Math.random()*140;
+        const r = 15 + Math.random()*55;
+        const sw = 3 + Math.random()*10;
+        const fill = Math.random() > 0.5 ? c1 : c2;
+        const op = (0.25 + Math.random()*0.4).toFixed(2);
+        shapes += `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${fill}" stroke-width="${sw}" opacity="${op}"/>`;
+      }
+    } else if(mode === 2){
+      // диагональные полосы
+      const c1 = pick(palette), c2 = pick(palette);
+      const n = 5 + Math.floor(Math.random()*5);
+      for(let i=0;i<n;i++){
+        const x = -40 + i * (340/n) + Math.random()*10;
+        const w = 8 + Math.random()*22;
+        const fill = Math.random() > 0.5 ? c1 : c2;
+        const op = (0.1 + Math.random()*0.25).toFixed(2);
+        shapes += `<polygon points="${x},180 ${x+40},0 ${x+40+w},0 ${x+w},180" fill="${fill}" opacity="${op}"/>`;
+      }
+    } else if(mode === 3){
+      // сетка точек разного размера
+      const c1 = pick(palette), c2 = pick(palette);
+      const cols = 6 + Math.floor(Math.random()*3);
+      const rows = 3 + Math.floor(Math.random()*2);
+      for(let ix=0; ix<cols; ix++){
+        for(let iy=0; iy<rows; iy++){
+          if(Math.random() > 0.55) continue;
+          const cx = (300/cols) * (ix+0.5) + (Math.random()*14-7);
+          const cy = (180/rows) * (iy+0.5) + (Math.random()*14-7);
+          const r = 4 + Math.random()*16;
+          const fill = Math.random() > 0.5 ? c1 : c2;
+          const op = (0.2 + Math.random()*0.4).toFixed(2);
+          shapes += `<circle cx="${cx}" cy="${cy}" r="${r}" fill="${fill}" opacity="${op}"/>`;
+        }
+      }
+    } else {
+      // волнистые линии
+      const c1 = pick(palette), c2 = pick(palette);
+      const n = 3 + Math.floor(Math.random()*3);
+      for(let i=0;i<n;i++){
+        const yBase = 20 + i * (140/n) + Math.random()*20;
+        const amp = 10 + Math.random()*25;
+        const fill = Math.random() > 0.5 ? c1 : c2;
+        const op = (0.2 + Math.random()*0.35).toFixed(2);
+        const sw = 2 + Math.random()*5;
+        const path = `M -10 ${yBase} Q 75 ${yBase-amp}, 150 ${yBase} T 310 ${yBase}`;
+        shapes += `<path d="${path}" fill="none" stroke="${fill}" stroke-width="${sw}" opacity="${op}"/>`;
+      }
     }
+
     return `<svg viewBox="0 0 300 180" xmlns="http://www.w3.org/2000/svg">
-      <rect width="300" height="180" fill="#15171b"/>
-      ${shapes.join('')}
+      <rect width="300" height="180" fill="${bg}"/>
+      ${shapes}
     </svg>`;
   }
 
@@ -678,6 +800,11 @@
   });
 
   const notifyToggle = el('notifyToggle');
+  const pushServerField = el('pushServerField');
+  const pushServerInput = el('pushServerInput');
+  const pushServerSave = el('pushServerSave');
+  const pushServerStatus = el('pushServerStatus');
+
   notifyToggle.addEventListener('click', async ()=>{
     if(!('Notification' in window)){
       notifyHint.textContent = 'Этот браузер не поддерживает системные уведомления.';
@@ -690,50 +817,113 @@
       if(perm === 'granted'){
         state.notifyOn = true;
         notifyToggle.classList.add('on');
-        notifyHint.textContent = 'Готово: уведомления будут всплывать, даже если экран заблокирован или ты в другом приложении (пока «Стоп-кран» не закрыт полностью).';
+        notifyHint.textContent = 'Локальные уведомления включены. Чтобы они приходили и при полностью закрытом приложении — укажи ниже адрес push-сервера.';
+        pushServerField.style.display = 'block';
+        if(state.pushServerUrl){ subscribeToPush(); }
       } else {
         notifyHint.textContent = 'Уведомления заблокированы в настройках браузера/телефона — включи их там, чтобы это заработало.';
       }
     } else {
       state.notifyOn = false;
       notifyToggle.classList.remove('on');
+      pushServerField.style.display = 'none';
       notifyHint.textContent = 'Покажет системное уведомление со звуком, даже если экран заблокирован или ты в другом приложении. Не сработает, если «Стоп-кран» полностью закрыт (смахнут из списка последних).';
+      unsubscribeFromPush();
     }
     saveSettings();
   });
 
-  // ---------- Persistence (best-effort, silent fallback) ----------
-  async function saveStats(){
+  pushServerSave.addEventListener('click', async ()=>{
+    const url = pushServerInput.value.trim().replace(/\/+$/,'');
+    if(!url){ pushServerStatus.textContent = 'Вставь адрес воркера сначала.'; return; }
+    state.pushServerUrl = url;
+    saveSettings();
+    await subscribeToPush();
+  });
+
+  async function subscribeToPush(){
+    if(!state.pushServerUrl){ return; }
+    if(!('serviceWorker' in navigator) || !('PushManager' in window)){
+      pushServerStatus.textContent = 'Этот браузер не поддерживает push-уведомления.';
+      return;
+    }
+    try{
+      pushServerStatus.textContent = 'Подписываю...';
+      const reg = await navigator.serviceWorker.ready;
+      let sub = await reg.pushManager.getSubscription();
+      if(!sub){
+        sub = await reg.pushManager.subscribe({
+          userVisibleOnly: true,
+          applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY)
+        });
+      }
+      const res = await fetch(state.pushServerUrl + '/subscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ subscription: sub.toJSON(), minMin: state.minMin, maxMin: state.maxMin })
+      });
+      if(res.ok){
+        pushServerStatus.textContent = 'Готово: подписка активна. Уведомления будут приходить, даже если приложение полностью закрыто.';
+      } else {
+        pushServerStatus.textContent = 'Сервер ответил ошибкой — проверь адрес и что сервер развёрнут.';
+      }
+    }catch(e){
+      pushServerStatus.textContent = 'Не получилось подписаться: ' + (e && e.message ? e.message : e);
+    }
+  }
+
+  async function unsubscribeFromPush(){
+    try{
+      if(!('serviceWorker' in navigator)) return;
+      const reg = await navigator.serviceWorker.ready;
+      const sub = await reg.pushManager.getSubscription();
+      if(sub){
+        if(state.pushServerUrl){
+          fetch(state.pushServerUrl + '/unsubscribe', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ endpoint: sub.endpoint })
+          }).catch(()=>{});
+        }
+        await sub.unsubscribe();
+      }
+    }catch(e){}
+  }
+
+  // ---------- Persistence (localStorage — приложение работает как самостоятельный сайт) ----------
+  function saveStats(){
     try{
       const today = new Date().toISOString().slice(0,10);
-      await window.storage.set('stopkran:stats', JSON.stringify({date:today, count: state.count}));
+      localStorage.setItem('stopkran:stats', JSON.stringify({date:today, count: state.count}));
     }catch(e){ /* работаем без сохранения */ }
   }
-  async function saveSettings(){
+  function saveSettings(){
     try{
-      await window.storage.set('stopkran:settings', JSON.stringify({
-        enabled: state.enabled, minMin: state.minMin, maxMin: state.maxMin, soundOn: state.soundOn, notifyOn: state.notifyOn
+      localStorage.setItem('stopkran:settings', JSON.stringify({
+        enabled: state.enabled, minMin: state.minMin, maxMin: state.maxMin,
+        soundOn: state.soundOn, notifyOn: state.notifyOn, pushServerUrl: state.pushServerUrl
       }));
     }catch(e){}
   }
   async function loadAll(){
     try{
       const today = new Date().toISOString().slice(0,10);
-      const s = await window.storage.get('stopkran:stats');
-      if(s && s.value){
-        const parsed = JSON.parse(s.value);
+      const raw = localStorage.getItem('stopkran:stats');
+      if(raw){
+        const parsed = JSON.parse(raw);
         if(parsed.date === today){ state.count = parsed.count || 0; }
       }
     }catch(e){}
     try{
-      const s = await window.storage.get('stopkran:settings');
-      if(s && s.value){
-        const parsed = JSON.parse(s.value);
+      const raw = localStorage.getItem('stopkran:settings');
+      if(raw){
+        const parsed = JSON.parse(raw);
         if(parsed.enabled){ state.enabled = parsed.enabled; }
         if(parsed.minMin){ state.minMin = parsed.minMin; }
         if(parsed.maxMin){ state.maxMin = parsed.maxMin; }
         if(typeof parsed.soundOn === 'boolean'){ state.soundOn = parsed.soundOn; }
         if(typeof parsed.notifyOn === 'boolean' && Notification.permission === 'granted'){ state.notifyOn = parsed.notifyOn; }
+        if(typeof parsed.pushServerUrl === 'string'){ state.pushServerUrl = parsed.pushServerUrl; }
       }
     }catch(e){}
 
@@ -745,6 +935,8 @@
     });
     soundToggle.classList.toggle('on', state.soundOn);
     notifyToggle.classList.toggle('on', state.notifyOn);
+    if(state.notifyOn){ pushServerField.style.display = 'block'; }
+    if(state.pushServerUrl){ pushServerInput.value = state.pushServerUrl; }
     updateFooter();
     scheduleNext();
   }
