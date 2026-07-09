@@ -378,6 +378,12 @@
   <div class="toggle-row" style="border-bottom:1px solid var(--line); margin-bottom:4px;">
     <span>Звуковой сигнал</span><button class="switch on" id="soundToggle"></button>
   </div>
+  <div class="toggle-row" style="border-bottom:1px solid var(--line); margin-bottom:4px;">
+    <span>Уведомления вне приложения</span><button class="switch" id="notifyToggle"></button>
+  </div>
+  <p style="font-size:12px;color:var(--ink-dim);margin:-6px 0 18px;line-height:1.5;" id="notifyHint">
+    Покажет системное уведомление со звуком, даже если экран заблокирован или ты в другом приложении. Не сработает, если «Стоп-кран» полностью закрыт (смахнут из списка последних).
+  </p>
 
   <h3 style="margin-top:18px;font-size:15px;">Что показывать</h3>
   <div class="toggle-row"><span>Заземление</span><button class="switch on" data-cat="grounding"></button></div>
@@ -447,6 +453,7 @@
     minMin: 25,
     maxMin: 70,
     soundOn: true,
+    notifyOn: false,
     count: 0,
     timerId: null,
     activeCountdown: null
@@ -462,6 +469,7 @@
   const settingsBtn = el('settingsBtn'), drawer = el('drawer'), drawerBackdrop = el('drawerBackdrop'), closeDrawer = el('closeDrawer');
   const minRange = el('minRange'), maxRange = el('maxRange'), minVal = el('minVal'), maxVal = el('maxVal');
   const soundToggle = el('soundToggle');
+  const notifyHint = el('notifyHint');
   const countLabel = el('countLabel'), dotRow = el('dotRow'), statusHint = el('statusHint');
 
   const DISMISS_PHRASES = [
@@ -569,10 +577,28 @@
     overlay.classList.add('show');
     dismissBtn.focus();
     playChime();
+    sendSystemNotification(cardTagText.textContent, cardTitle.textContent || cardBody.textContent);
 
     state.count++;
     updateFooter();
     saveStats();
+  }
+
+  function sendSystemNotification(tag, body){
+    if(!state.notifyOn) return;
+    if(!('Notification' in window) || Notification.permission !== 'granted') return;
+    if(!document.hidden) return; // приложение и так на экране — системное уведомление не нужно
+    if(!('serviceWorker' in navigator)) return;
+    navigator.serviceWorker.ready.then((reg)=>{
+      reg.showNotification('Стоп-кран · ' + tag, {
+        body: body,
+        icon: 'icon-192.png',
+        badge: 'icon-192.png',
+        tag: 'stop-kran-pause',
+        renotify: true,
+        silent: false
+      });
+    }).catch(()=>{});
   }
 
   function hidePause(){
@@ -651,6 +677,31 @@
     saveSettings();
   });
 
+  const notifyToggle = el('notifyToggle');
+  notifyToggle.addEventListener('click', async ()=>{
+    if(!('Notification' in window)){
+      notifyHint.textContent = 'Этот браузер не поддерживает системные уведомления.';
+      return;
+    }
+    if(!state.notifyOn){
+      // включаем — запрашиваем разрешение, если ещё не спрашивали
+      let perm = Notification.permission;
+      if(perm === 'default'){ perm = await Notification.requestPermission(); }
+      if(perm === 'granted'){
+        state.notifyOn = true;
+        notifyToggle.classList.add('on');
+        notifyHint.textContent = 'Готово: уведомления будут всплывать, даже если экран заблокирован или ты в другом приложении (пока «Стоп-кран» не закрыт полностью).';
+      } else {
+        notifyHint.textContent = 'Уведомления заблокированы в настройках браузера/телефона — включи их там, чтобы это заработало.';
+      }
+    } else {
+      state.notifyOn = false;
+      notifyToggle.classList.remove('on');
+      notifyHint.textContent = 'Покажет системное уведомление со звуком, даже если экран заблокирован или ты в другом приложении. Не сработает, если «Стоп-кран» полностью закрыт (смахнут из списка последних).';
+    }
+    saveSettings();
+  });
+
   // ---------- Persistence (best-effort, silent fallback) ----------
   async function saveStats(){
     try{
@@ -661,7 +712,7 @@
   async function saveSettings(){
     try{
       await window.storage.set('stopkran:settings', JSON.stringify({
-        enabled: state.enabled, minMin: state.minMin, maxMin: state.maxMin, soundOn: state.soundOn
+        enabled: state.enabled, minMin: state.minMin, maxMin: state.maxMin, soundOn: state.soundOn, notifyOn: state.notifyOn
       }));
     }catch(e){}
   }
@@ -682,6 +733,7 @@
         if(parsed.minMin){ state.minMin = parsed.minMin; }
         if(parsed.maxMin){ state.maxMin = parsed.maxMin; }
         if(typeof parsed.soundOn === 'boolean'){ state.soundOn = parsed.soundOn; }
+        if(typeof parsed.notifyOn === 'boolean' && Notification.permission === 'granted'){ state.notifyOn = parsed.notifyOn; }
       }
     }catch(e){}
 
@@ -692,6 +744,7 @@
       btn.classList.toggle('on', !!state.enabled[cat]);
     });
     soundToggle.classList.toggle('on', state.soundOn);
+    notifyToggle.classList.toggle('on', state.notifyOn);
     updateFooter();
     scheduleNext();
   }
